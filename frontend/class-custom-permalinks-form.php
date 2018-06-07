@@ -81,7 +81,7 @@ class Custom_Permalinks_Form {
 
 
       $custom_permalink = str_replace( '%2F', '/',
-          urlencode( ltrim( stripcslashes( $_REQUEST['custom_permalink'] ), "/" ) )
+          urlencode( ltrim( stripcslashes( $original_link ), "/" ) )
       );
 
       $custom_permalink_noslash = preg_replace( '@/+@','/', trim( $custom_permalink, '/' ) );
