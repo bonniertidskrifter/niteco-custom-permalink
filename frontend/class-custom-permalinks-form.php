@@ -79,15 +79,19 @@ class Custom_Permalinks_Form {
         )
       );
 
+      $this->clear_custom_permalinks_cache_data($original_link);
+      $this->clear_custom_permalinks_cache_data($_REQUEST['custom_permalink']);
+    }
+  }
 
+  private function clear_custom_permalinks_cache_data($url){
       $custom_permalink = str_replace( '%2F', '/',
-          urlencode( ltrim( stripcslashes( $original_link ), "/" ) )
+          urlencode( ltrim( stripcslashes( $url ), "/" ) )
       );
 
       $custom_permalink_noslash = preg_replace( '@/+@','/', trim( $custom_permalink, '/' ) );
       delete_transient(md5("data1" . $custom_permalink_noslash));
       delete_transient(md5("data2" . $custom_permalink_noslash));
-    }
   }
 
 
