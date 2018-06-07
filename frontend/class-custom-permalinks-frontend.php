@@ -127,9 +127,11 @@ class Custom_Permalinks_Frontend
 
             if (empty($posts)) {
                 $posts = $wpdb->get_results($sql);
-                set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
-            } else {
-                set_transient($sql_cache_key, 'no_data', 10);
+                if ($posts) {
+                    set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
+                } else {
+                    set_transient($sql_cache_key, 'no_data', 10);
+                }
             }
             if ($posts == 'no_data') {
                 $posts = array();
