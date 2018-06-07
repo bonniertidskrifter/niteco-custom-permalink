@@ -90,8 +90,8 @@ class Custom_Permalinks_Form {
       );
 
       $custom_permalink_noslash = preg_replace( '@/+@','/', trim( $custom_permalink, '/' ) );
-      delete_transient(md5("data1" . $custom_permalink_noslash));
-      delete_transient(md5("data2" . $custom_permalink_noslash));
+      delete_transient(md5("custom_permalink_parse_request_" . $custom_permalink_noslash));
+      delete_transient(md5("make_redirect_" . $custom_permalink_noslash));
   }
 
 

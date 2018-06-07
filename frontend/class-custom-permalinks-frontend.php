@@ -86,56 +86,41 @@ class Custom_Permalinks_Frontend
         }
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
 
-        $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
-            " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
-            " WHERE pm.meta_key = 'custom_permalink' " .
-            " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
-            " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
-            " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-            " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/");
-
-        $sql_cache_key = md5("data1" . $request_noslash);
+        $sql_cache_key = md5("custom_permalink_parse_request_" . $request_noslash);
         $posts = get_transient($sql_cache_key);
-
         if (empty($posts)) {
+            $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
+                " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
+                " WHERE pm.meta_key = 'custom_permalink' " .
+                " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
+                " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
+                " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+                " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/");
             $posts = $wpdb->get_results($sql);
+
+            $remove_like_query = apply_filters('cp_remove_like_query', '__true');
+            if (!$posts && '__true' === $remove_like_query) {
+                $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
+                    " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
+                    " meta_key = 'custom_permalink' AND meta_value != '' AND " .
+                    " ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
+                    "   LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) ) " .
+                    "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
+                    " ORDER BY LENGTH(meta_value) DESC, " .
+                    " FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+                    " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
+                    $request_noslash, $request_noslash . "/");
+                $posts = $wpdb->get_results($sql);
+            }
+
             if ($posts) {
                 set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
             } else {
-                set_transient($sql_cache_key, 'no_data', 10);
+                set_transient($sql_cache_key, 'no_data', 60);
             }
         }
         if ($posts == 'no_data') {
             $posts = array();
-        }
-
-        $remove_like_query = apply_filters('cp_remove_like_query', '__true');
-        if (!$posts && '__true' === $remove_like_query) {
-            $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
-                " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
-                " meta_key = 'custom_permalink' AND meta_value != '' AND " .
-                " ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
-                "   LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) ) " .
-                "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
-                " ORDER BY LENGTH(meta_value) DESC, " .
-                " FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-                " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
-                $request_noslash, $request_noslash . "/");
-
-            $sql_cache_key = md5("data2" . $request_noslash);
-            $posts = get_transient($sql_cache_key);
-
-            if (empty($posts)) {
-                $posts = $wpdb->get_results($sql);
-                if ($posts) {
-                    set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
-                } else {
-                    set_transient($sql_cache_key, 'no_data', 10);
-                }
-            }
-            if ($posts == 'no_data') {
-                $posts = array();
-            }
         }
 
 
@@ -286,30 +271,45 @@ class Custom_Permalinks_Frontend
         }
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
 
-        $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
-            " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
-            " WHERE pm.meta_key = 'custom_permalink' " .
-            " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
-            " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
-            " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-            " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/");
 
-        $posts = $wpdb->get_results($sql);
+        $sql_cache_key = md5("make_redirect_" . $request_noslash);
+        $posts = get_transient($sql_cache_key);
 
-        $remove_like_query = apply_filters('cp_remove_like_query', '__true');
-        if (!$posts && '__false' !== $remove_like_query) {
-            $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
-                " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
-                " meta_key = 'custom_permalink' AND meta_value != '' AND " .
-                " ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
-                "   LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) ) " .
-                "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
-                " ORDER BY LENGTH(meta_value) DESC, " .
-                " FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-                " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
-                $request_noslash, $request_noslash . "/");
-
+        if (empty($posts)) {
+            $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
+                " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
+                " WHERE pm.meta_key = 'custom_permalink' " .
+                " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
+                " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
+                " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+                " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/");
             $posts = $wpdb->get_results($sql);
+
+            $remove_like_query = apply_filters('cp_remove_like_query', '__true');
+            if (!$posts && '__false' !== $remove_like_query) {
+                $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
+                    " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
+                    " meta_key = 'custom_permalink' AND meta_value != '' AND " .
+                    " ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
+                    "   LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) ) " .
+                    "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
+                    " ORDER BY LENGTH(meta_value) DESC, " .
+                    " FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+                    " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
+                    $request_noslash, $request_noslash . "/");
+
+                $posts = $wpdb->get_results($sql);
+            }
+
+            if ($posts) {
+                set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
+            } else {
+                set_transient($sql_cache_key, 'no_data', 60);
+            }
+        }
+
+        if ($posts == 'no_data') {
+            $posts = array();
         }
 
         if (!isset($posts[0]->ID) || !isset($posts[0]->meta_value)
