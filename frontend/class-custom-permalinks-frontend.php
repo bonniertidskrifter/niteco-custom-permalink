@@ -91,7 +91,13 @@ class Custom_Permalinks_Frontend {
             " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
             " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/" );
 
-    $posts = $wpdb->get_results( $sql );
+    $sql_cache_key = md5("data1". $request_noslash);
+    $posts = get_transient($sql_cache_key);
+
+    if (empty($posts)){
+        $posts = $wpdb->get_results( $sql );
+        set_transient( $sql_cache_key, $posts, DAY_IN_SECONDS );
+    }
 
     $remove_like_query = apply_filters( 'cp_remove_like_query', '__true' );
     if ( ! $posts && '__true' === $remove_like_query ) {
@@ -106,7 +112,13 @@ class Custom_Permalinks_Frontend {
               " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
               $request_noslash, $request_noslash . "/" );
 
-      $posts = $wpdb->get_results( $sql );
+        $sql_cache_key = md5("data2". $request_noslash);
+        $posts = get_transient($sql_cache_key);
+
+        if (empty($posts)){
+            $posts = $wpdb->get_results( $sql );
+            set_transient( $sql_cache_key, $posts, DAY_IN_SECONDS );
+        }
     }
 
     if ( $posts ) {
