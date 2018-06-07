@@ -1,0 +1,5 @@
+{
+    "type"        : "wordpress-plugin",
+    "name"        : "bonniertidskrifter/niteco-custom-permalink",
+    "description" : "Niteco Custom Permalink plugin"
+}
