@@ -116,7 +116,7 @@ class Custom_Permalinks_Frontend
             if ($posts) {
                 set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
             } else {
-                set_transient($sql_cache_key, 'no_data', HOUR_IN_SECONDS);
+                set_transient($sql_cache_key, 'no_data', DAY_IN_SECONDS);
             }
         }
         if ($posts == 'no_data') {
@@ -304,7 +304,7 @@ class Custom_Permalinks_Frontend
             if ($posts) {
                 set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
             } else {
-                set_transient($sql_cache_key, 'no_data', HOUR_IN_SECONDS);
+                set_transient($sql_cache_key, 'no_data', DAY_IN_SECONDS);
             }
         }
 
