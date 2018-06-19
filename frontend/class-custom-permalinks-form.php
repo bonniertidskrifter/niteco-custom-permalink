@@ -312,6 +312,8 @@ class Custom_Permalinks_Form {
       return;
     }
     $new_permalink = ltrim( stripcslashes( $_REQUEST['custom_permalink'] ), '/' );
+    $this->clear_custom_permalinks_cache_data($new_permalink);
+
 
     $cp_frontend = new Custom_Permalinks_Frontend();
     if ( $new_permalink == $cp_frontend->custom_permalinks_original_tag_link( $id ) ) {
@@ -334,6 +336,7 @@ class Custom_Permalinks_Form {
       return;
     }
     $new_permalink = ltrim( stripcslashes( $_REQUEST['custom_permalink'] ), '/' );
+    $this->clear_custom_permalinks_cache_data($new_permalink);
 
     $cp_frontend = new Custom_Permalinks_Frontend();
     if ( $new_permalink == $cp_frontend->custom_permalinks_original_category_link( $id ) ) {
