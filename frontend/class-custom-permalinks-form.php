@@ -65,14 +65,9 @@ class Custom_Permalinks_Form {
     if ( ! isset( $_REQUEST['custom_permalinks_edit'] ) ) {
       return;
     }
-
     delete_post_meta( $id, 'custom_permalink' );
-
     $cp_frontend = new Custom_Permalinks_Frontend();
     $original_link = $cp_frontend->custom_permalinks_original_post_link( $id );
-
-    $this->clear_custom_permalinks_cache_data($original_link);
-
     $permalink_structure = get_option( 'permalink_structure' );
 
     if ( $_REQUEST['custom_permalink'] && $_REQUEST['custom_permalink'] != $original_link ) {
@@ -81,7 +76,7 @@ class Custom_Permalinks_Form {
           urlencode( ltrim( stripcslashes( $_REQUEST['custom_permalink'] ), "/" ) )
         )
       );
-
+      $this->clear_custom_permalinks_cache_data($original_link);
       $this->clear_custom_permalinks_cache_data($_REQUEST['custom_permalink']);
     }
   }
