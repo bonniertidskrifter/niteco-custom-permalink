@@ -161,8 +161,8 @@ class Custom_Permalinks_Frontend
             }
 
             foreach (array_keys($table) as $permalink) {
-                if ($permalink == substr($request_noslash, 0, strlen($permalink))
-                    || $permalink == substr($request_noslash . '/', 0, strlen($permalink))) {
+                //if ($permalink == substr($request_noslash, 0, strlen($permalink)) || $permalink == substr($request_noslash . '/', 0, strlen($permalink))) {
+                if ($permalink == $request_noslash || $permalink == $request_noslash . '/') {
                     $term = $table[$permalink];
 
                     // Preserve this url for later if it's the same as the permalink (no extra stuff)
