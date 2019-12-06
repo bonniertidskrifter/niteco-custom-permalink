@@ -86,8 +86,13 @@ class Custom_Permalinks_Frontend
         }
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
 
-        $sql_cache_key = md5("custom_permalink_parse_request_" . $request_noslash);
-        $posts = get_transient($sql_cache_key);
+        $sql_cache_key = "custom_permalink_parse_request_" . $request_noslash;
+        if (function_exists('paf_db_tmp_cache_get')){
+            $posts = paf_db_tmp_cache_get($sql_cache_key, true );    
+        }else{
+            $posts = get_transient(md5($sql_cache_key));
+        }
+		
         if (empty($posts)) {
             $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
                 " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
@@ -114,9 +119,17 @@ class Custom_Permalinks_Frontend
             }
 
             if ($posts) {
-                set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
+                if (function_exists('paf_db_tmp_cache_set')){
+                    paf_db_tmp_cache_set($sql_cache_key, $posts, 10*DAY_IN_SECONDS,true);
+                }else{
+                    set_transient($sql_cache_key, $posts, 10*DAY_IN_SECONDS);
+                }
             } else {
-                set_transient($sql_cache_key, 'no_data', DAY_IN_SECONDS);
+                if (function_exists('paf_db_tmp_cache_set')){
+                    paf_db_tmp_cache_set($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS,true);
+                }else{
+                    set_transient($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS);
+                }
             }
         }
         if ($posts == 'no_data') {
@@ -272,8 +285,12 @@ class Custom_Permalinks_Frontend
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
 
 
-        $sql_cache_key = md5("make_redirect_" . $request_noslash);
-        $posts = get_transient($sql_cache_key);
+        $sql_cache_key = "make_redirect_" . $request_noslash;
+		if (function_exists('paf_db_tmp_cache_get')){
+            $posts = paf_db_tmp_cache_get($sql_cache_key, true );
+        }else{
+            $posts = get_transient(md5($sql_cache_key));
+        }
 
         if (empty($posts)) {
             $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
@@ -300,12 +317,21 @@ class Custom_Permalinks_Frontend
 
                 $posts = $wpdb->get_results($sql);
             }
-
-            if ($posts) {
-                set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
+			
+			if ($posts) {
+                if (function_exists('paf_db_tmp_cache_set')){
+                    paf_db_tmp_cache_set($sql_cache_key, $posts, 10*DAY_IN_SECONDS,true);
+                }else{
+                    set_transient($sql_cache_key, $posts, 10*DAY_IN_SECONDS);
+                }
             } else {
-                set_transient($sql_cache_key, 'no_data', DAY_IN_SECONDS);
+                if (function_exists('paf_db_tmp_cache_set')){
+                    paf_db_tmp_cache_set($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS,true);
+                }else{
+                    set_transient($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS);
+                }
             }
+			
         }
 
         if ($posts == 'no_data') {

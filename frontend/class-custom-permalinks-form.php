@@ -82,14 +82,20 @@ class Custom_Permalinks_Form {
   }
 
   private function clear_custom_permalinks_cache_data($url){
-      $custom_permalink = str_replace( '%2F', '/',
-          urlencode( ltrim( stripcslashes( $url ), "/" ) )
-      );
+	  $custom_permalink = str_replace( '%2F', '/',
+		  urlencode( ltrim( stripcslashes( $url ), "/" ) )
+	  );
 
-      $custom_permalink_noslash = preg_replace( '@/+@','/', trim( $custom_permalink, '/' ) );
-      delete_transient(md5("custom_permalink_parse_request_" . $custom_permalink_noslash));
-      delete_transient(md5("make_redirect_" . $custom_permalink_noslash));
-  }
+	  $custom_permalink_noslash = preg_replace( '@/+@','/', trim( $custom_permalink, '/' ) );
+	  
+	  if (function_exists("paf_db_tmp_cache_delete")){
+		  paf_db_tmp_cache_delete("custom_permalink_parse_request_" . $custom_permalink_noslash, true);
+		  paf_db_tmp_cache_delete("make_redirect_" . $custom_permalink_noslash, true);
+	  }else{
+		  delete_transient(md5("custom_permalink_parse_request_" . $custom_permalink_noslash));
+		  delete_transient(md5("make_redirect_" . $custom_permalink_noslash));
+	  }
+	}
 
 
   /**
