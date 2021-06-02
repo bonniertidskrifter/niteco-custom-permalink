@@ -87,7 +87,7 @@ class Custom_Permalinks_Frontend
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
 
 
-        $posts = '';
+        $posts = false;
         $tmp_request_noslash = explode("-",$request_noslash );
         $last_part =  end($tmp_request_noslash);
         $telegram_id_start = 1500000000;
@@ -296,11 +296,22 @@ class Custom_Permalinks_Frontend
         }
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
 
-        $sql_cache_key = "make_redirect_" . $request_noslash;
-        if (function_exists('paf_db_tmp_cache_get')){
-            $posts = paf_db_tmp_cache_get($sql_cache_key, true );
-        }else{
-            $posts = get_transient(md5($sql_cache_key));
+        $posts = false;
+        $tmp_request_noslash = explode("-",$request_noslash );
+        $last_part =  end($tmp_request_noslash);
+        $telegram_id_start = 1500000000;
+        //Telegram Post has the format such as:    gigger-polisanmaler-nordic-media-house-for-bedrageri-1622626215
+        if ((float)$last_part > $telegram_id_start) {
+            $posts = 'no_data';
+        }
+
+        if (empty($posts)) {
+            $sql_cache_key = "make_redirect_" . $request_noslash;
+            if (function_exists('paf_db_tmp_cache_get')) {
+                $posts = paf_db_tmp_cache_get($sql_cache_key, true);
+            } else {
+                $posts = get_transient(md5($sql_cache_key));
+            }
         }
 
         if (empty($posts)) {
