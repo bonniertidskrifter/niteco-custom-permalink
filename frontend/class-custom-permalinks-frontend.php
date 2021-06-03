@@ -92,12 +92,12 @@ class Custom_Permalinks_Frontend
         $last_part =  end($tmp_request_noslash);
         $telegram_id_start = 1500000000;
         //Telegram Post has the format such as:    gigger-polisanmaler-nordic-media-house-for-bedrageri-1622626215
-        if ((float)$last_part > $telegram_id_start) {
+        if ((float)$last_part > $telegram_id_start ||  strpos($request_noslash, '-insref-') !== false  ) {
             $posts = 'no_data';
         }
 
+        $sql_cache_key = "custom_permalink_parse_request_" . $request_noslash;
         if (empty($posts)){
-            $sql_cache_key = "custom_permalink_parse_request_" . $request_noslash;
             if (function_exists('paf_db_tmp_cache_get')){
                 $posts = paf_db_tmp_cache_get($sql_cache_key, true );
             }else{
@@ -114,7 +114,6 @@ class Custom_Permalinks_Frontend
                 " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
                 " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/");
             $posts = $wpdb->get_results($sql);
-
             $remove_like_query = apply_filters('cp_remove_like_query', '__true');
             if (!$posts && '__true' === $remove_like_query) {
                 $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
@@ -301,12 +300,12 @@ class Custom_Permalinks_Frontend
         $last_part =  end($tmp_request_noslash);
         $telegram_id_start = 1500000000;
         //Telegram Post has the format such as:    gigger-polisanmaler-nordic-media-house-for-bedrageri-1622626215
-        if ((float)$last_part > $telegram_id_start) {
+        if ((float)$last_part > $telegram_id_start ||  strpos($request_noslash, '-insref-') !== false  ) {
             $posts = 'no_data';
         }
 
+        $sql_cache_key = "make_redirect_" . $request_noslash;
         if (empty($posts)) {
-            $sql_cache_key = "make_redirect_" . $request_noslash;
             if (function_exists('paf_db_tmp_cache_get')) {
                 $posts = paf_db_tmp_cache_get($sql_cache_key, true);
             } else {
