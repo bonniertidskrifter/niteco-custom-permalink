@@ -92,7 +92,12 @@ class Custom_Permalinks_Frontend
         $last_part =  end($tmp_request_noslash);
         $telegram_id_start = 1500000000;
         //Telegram Post has the format such as:    gigger-polisanmaler-nordic-media-house-for-bedrageri-1622626215
-        if ((float)$last_part > $telegram_id_start ||  strpos($request_noslash, '-insref-') !== false  ) {
+        if ((float)$last_part > $telegram_id_start ||
+            strpos($request_noslash, '-insref-') !== false ||
+            strpos($request_noslash, 'rss.xml') !== false ||
+            strpos($request_noslash, 'wp-login') !== false ||
+            $request_noslash == 'login'
+        ) {
             $posts = 'no_data';
         }
 
@@ -300,7 +305,12 @@ class Custom_Permalinks_Frontend
         $last_part =  end($tmp_request_noslash);
         $telegram_id_start = 1500000000;
         //Telegram Post has the format such as:    gigger-polisanmaler-nordic-media-house-for-bedrageri-1622626215
-        if ((float)$last_part > $telegram_id_start ||  strpos($request_noslash, '-insref-') !== false  ) {
+        if ((float)$last_part > $telegram_id_start ||
+            strpos($request_noslash, '-insref-') !== false ||
+            strpos($request_noslash, 'rss.xml') !== false ||
+            strpos($request_noslash, 'wp-login') !== false ||
+            $request_noslash == 'login'
+        ) {
             $posts = 'no_data';
         }
 
