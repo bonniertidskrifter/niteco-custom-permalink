@@ -96,21 +96,19 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '-insref-') !== false ||
             strpos($request_noslash, 'rss.xml') !== false ||
             strpos($request_noslash, 'wp-login') !== false ||
-            strpos($request_noslash, '?author=') !== false ||
-            $request_noslash == 'login'
+            strpos($request_noslash, '?author=') !== false
         ) {
             $posts = 'no_data';
         }
 
         $sql_cache_key = "custom_permalink_parse_request_" . $request_noslash;
-        if (empty($posts)){
+        if (!$posts){
             if (function_exists('paf_db_tmp_cache_get')){
                 $posts = paf_db_tmp_cache_get($sql_cache_key, true );
             }else{
                 $posts = get_transient(md5($sql_cache_key));
             }
         }
-
         if (empty($posts)) {
             $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
                 " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
@@ -310,14 +308,13 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '-insref-') !== false ||
             strpos($request_noslash, 'rss.xml') !== false ||
             strpos($request_noslash, 'wp-login') !== false ||
-            strpos($request_noslash, '?author=') !== false ||
-            $request_noslash == 'login'
+            strpos($request_noslash, '?author=') !== false
         ) {
             $posts = 'no_data';
         }
 
         $sql_cache_key = "make_redirect_" . $request_noslash;
-        if (empty($posts)) {
+        if (!$posts) {
             if (function_exists('paf_db_tmp_cache_get')) {
                 $posts = paf_db_tmp_cache_get($sql_cache_key, true);
             } else {
