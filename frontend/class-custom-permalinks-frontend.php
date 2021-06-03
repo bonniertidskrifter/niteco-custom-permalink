@@ -96,7 +96,8 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '-insref-') !== false ||
             strpos($request_noslash, 'rss.xml') !== false ||
             strpos($request_noslash, 'wp-login') !== false ||
-            strpos($request_noslash, '?author=') !== false
+            strpos($request_noslash, '?author=') !== false ||
+            $request_noslash == ''
         ) {
             $posts = 'no_data';
         }
@@ -308,10 +309,13 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '-insref-') !== false ||
             strpos($request_noslash, 'rss.xml') !== false ||
             strpos($request_noslash, 'wp-login') !== false ||
-            strpos($request_noslash, '?author=') !== false
+            strpos($request_noslash, '?author=') !== false ||
+            $request_noslash == ''
         ) {
             $posts = 'no_data';
         }
+
+
 
         $sql_cache_key = "make_redirect_" . $request_noslash;
         if (!$posts) {
