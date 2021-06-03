@@ -96,7 +96,7 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '-insref-') !== false ||
             strpos($request_noslash, 'rss.xml') !== false ||
             strpos($request_noslash, 'wp-login') !== false ||
-            strpos($request_noslash, '?author=') !== false ||
+            strpos($request_noslash, 'taggar/') !== false ||
             strpos($request_noslash, '?') !== false ||
             strpos($request_noslash, '.') !== false ||
             $request_noslash == ''
@@ -310,7 +310,7 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '-insref-') !== false ||
             strpos($request_noslash, 'rss.xml') !== false ||
             strpos($request_noslash, 'wp-login') !== false ||
-            strpos($request_noslash, '?author=') !== false ||
+            strpos($request_noslash, 'taggar/') !== false ||
             strpos($request_noslash, '?') !== false ||
             strpos($request_noslash, '.') !== false ||
             $request_noslash == ''
