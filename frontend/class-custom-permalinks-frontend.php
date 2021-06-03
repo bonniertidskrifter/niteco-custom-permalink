@@ -353,11 +353,17 @@ class Custom_Permalinks_Frontend
             }
 
             if ($posts) {
-                //set_transient($sql_cache_key, $posts, DAY_IN_SECONDS);
-                paf_db_tmp_cache_get($sql_cache_key, $posts, 10*DAY_IN_SECONDS, true);
+                if (function_exists('paf_db_tmp_cache_set')){
+                    paf_db_tmp_cache_set($sql_cache_key, $posts, 10*DAY_IN_SECONDS,true);
+                }else{
+                    set_transient($sql_cache_key, $posts, 10*DAY_IN_SECONDS);
+                }
             } else {
-                //set_transient($sql_cache_key, 'no_data', DAY_IN_SECONDS);
-                paf_db_tmp_cache_get($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS, true);
+                if (function_exists('paf_db_tmp_cache_set')){
+                    paf_db_tmp_cache_set($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS,true);
+                }else{
+                    set_transient($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS);
+                }
             }
         }
 
