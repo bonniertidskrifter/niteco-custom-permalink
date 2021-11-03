@@ -86,7 +86,6 @@ class Custom_Permalinks_Frontend
         }
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
 
-
         $posts = false;
         $tmp_request_noslash = explode("-",$request_noslash );
         $last_part =  end($tmp_request_noslash);
@@ -113,27 +112,36 @@ class Custom_Permalinks_Frontend
             }
         }
         if (empty($posts)) {
-            $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
-                " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
-                " WHERE pm.meta_key = 'custom_permalink' " .
-                " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
-                " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
-                " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-                " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/");
-            $posts = $wpdb->get_results($sql);
-            $remove_like_query = apply_filters('cp_remove_like_query', '__true');
-            if (!$posts && '__true' === $remove_like_query) {
-                $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
-                    " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
-                    " meta_key = 'custom_permalink' AND meta_value != '' AND " .
-                    " ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
-                    "   LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) ) " .
-                    "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
-                    " ORDER BY LENGTH(meta_value) DESC, " .
-                    " FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
-                    " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
-                    $request_noslash, $request_noslash . "/");
-                $posts = $wpdb->get_results($sql);
+            if (strpos($request_noslash, 'articles/') !== false){
+              $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
+                  " FROM $wpdb->posts AS p INNER JOIN paf_custom_permalink AS pm ON (pm.post_id = p.ID) " .
+                  " WHERE pm.meta_key = 'custom_permalink' " .
+                  " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
+                  " LIMIT 1", $request_noslash, $request_noslash . "/");
+              $posts = $wpdb->get_results($sql);
+            }else{
+              $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
+                  " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
+                  " WHERE pm.meta_key = 'custom_permalink' " .
+                  " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
+                  " AND p.post_status != 'trash' AND p.post_type != 'nav_menu_item' " .
+                  " ORDER BY FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+                  " FIELD(post_type,'post','page') LIMIT 1", $request_noslash, $request_noslash . "/");
+              $posts = $wpdb->get_results($sql);
+              $remove_like_query = apply_filters('cp_remove_like_query', '__true');
+              if (!$posts && '__true' === $remove_like_query) {
+                  $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status FROM $wpdb->posts AS p " .
+                      " LEFT JOIN $wpdb->postmeta AS pm ON (p.ID = pm.post_id) WHERE " .
+                      " meta_key = 'custom_permalink' AND meta_value != '' AND " .
+                      " ( LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) OR " .
+                      "   LOWER(meta_value) = LEFT(LOWER('%s'), LENGTH(meta_value)) ) " .
+                      "  AND post_status != 'trash' AND post_type != 'nav_menu_item'" .
+                      " ORDER BY LENGTH(meta_value) DESC, " .
+                      " FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
+                      " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
+                      $request_noslash, $request_noslash . "/");
+                  $posts = $wpdb->get_results($sql);
+              }
             }
 
             if ($posts) {
@@ -300,7 +308,6 @@ class Custom_Permalinks_Frontend
             $request = $cp_form->custom_permalinks_check_conflicts($request);
         }
         $request_noslash = preg_replace('@/+@', '/', trim($request, '/'));
-
         $posts = false;
         $tmp_request_noslash = explode("-",$request_noslash );
         $last_part =  end($tmp_request_noslash);
@@ -328,6 +335,14 @@ class Custom_Permalinks_Frontend
         }
 
         if (empty($posts)) {
+          if (strpos($request_noslash, 'articles/') !== false){
+            $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
+                " FROM $wpdb->posts AS p INNER JOIN paf_custom_permalink AS pm ON (pm.post_id = p.ID) " .
+                " WHERE pm.meta_key = 'custom_permalink' " .
+                " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
+                " LIMIT 1", $request_noslash, $request_noslash . "/");
+            $posts = $wpdb->get_results($sql);
+          }else{
             $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
                 " FROM $wpdb->posts AS p INNER JOIN $wpdb->postmeta AS pm ON (pm.post_id = p.ID) " .
                 " WHERE pm.meta_key = 'custom_permalink' " .
@@ -349,23 +364,23 @@ class Custom_Permalinks_Frontend
                     " FIELD(post_status,'publish','private','draft','auto-draft','inherit')," .
                     " FIELD(post_type,'post','page'), p.ID ASC LIMIT 1",
                     $request_noslash, $request_noslash . "/");
-
                 $posts = $wpdb->get_results($sql);
             }
+          }
 
-            if ($posts) {
-                if (function_exists('paf_db_tmp_cache_set')){
-                    paf_db_tmp_cache_set($sql_cache_key, $posts, 10*DAY_IN_SECONDS,true);
-                }else{
-                    set_transient($sql_cache_key, $posts, 10*DAY_IN_SECONDS);
-                }
-            } else {
-                if (function_exists('paf_db_tmp_cache_set')){
-                    paf_db_tmp_cache_set($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS,true);
-                }else{
-                    set_transient($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS);
-                }
-            }
+          if ($posts) {
+              if (function_exists('paf_db_tmp_cache_set')){
+                  paf_db_tmp_cache_set($sql_cache_key, $posts, 10*DAY_IN_SECONDS,true);
+              }else{
+                  set_transient($sql_cache_key, $posts, 10*DAY_IN_SECONDS);
+              }
+          } else {
+              if (function_exists('paf_db_tmp_cache_set')){
+                  paf_db_tmp_cache_set($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS,true);
+              }else{
+                  set_transient($sql_cache_key, 'no_data', 10*DAY_IN_SECONDS);
+              }
+          }
         }
 
         if ($posts == 'no_data') {
