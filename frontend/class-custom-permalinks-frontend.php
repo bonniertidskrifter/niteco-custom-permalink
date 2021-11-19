@@ -342,6 +342,7 @@ class Custom_Permalinks_Frontend
         }
 
         if (empty($posts)) {
+			//optimize the query
           if (strpos($request_noslash, 'articles/') !== false){
             /*
             $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
