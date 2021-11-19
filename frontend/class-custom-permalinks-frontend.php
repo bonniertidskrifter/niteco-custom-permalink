@@ -112,7 +112,7 @@ class Custom_Permalinks_Frontend
             }
         }
         if (empty($posts)) {
-            if (strpos($request_noslash, '/articles/') !== false){
+            if (strpos($request_noslash, 'articles/') !== false){
               /*
               $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
                   " FROM $wpdb->posts AS p INNER JOIN paf_custom_permalink AS pm ON (pm.post_id = p.ID) " .
@@ -342,7 +342,7 @@ class Custom_Permalinks_Frontend
         }
 
         if (empty($posts)) {
-          if (strpos($request_noslash, '/articles/') !== false){
+          if (strpos($request_noslash, 'articles/') !== false){
             /*
             $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
                 " FROM $wpdb->posts AS p INNER JOIN paf_custom_permalink AS pm ON (pm.post_id = p.ID) " .
