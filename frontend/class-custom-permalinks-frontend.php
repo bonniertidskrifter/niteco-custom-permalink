@@ -98,6 +98,7 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, 'taggar/') !== false ||
             strpos($request_noslash, '?') !== false ||
             strpos($request_noslash, '.') !== false ||
+            strpos($request_noslash, 'api/chart') !== false ||
             $request_noslash == ''
         ) {
             $posts = 'no_data';
@@ -112,7 +113,7 @@ class Custom_Permalinks_Frontend
             }
         }
         if (empty($posts)) {
-            if (strpos($request_noslash, 'articles/') !== false){              
+            if (strpos($request_noslash, 'articles/') !== false){
               $sql = $wpdb->prepare("SELECT pm.post_id as ID, pm.meta_value " .
                   " FROM paf_custom_permalink AS pm " .
                   " WHERE pm.meta_key = 'custom_permalink' " .
@@ -320,6 +321,7 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, 'taggar/') !== false ||
             strpos($request_noslash, '?') !== false ||
             strpos($request_noslash, '.') !== false ||
+            strpos($request_noslash, 'api/chart') !== false ||
             $request_noslash == ''
         ) {
             $posts = 'no_data';
