@@ -112,14 +112,7 @@ class Custom_Permalinks_Frontend
             }
         }
         if (empty($posts)) {
-            if (strpos($request_noslash, 'articles/') !== false){
-              /*
-              $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
-                  " FROM $wpdb->posts AS p INNER JOIN paf_custom_permalink AS pm ON (pm.post_id = p.ID) " .
-                  " WHERE pm.meta_key = 'custom_permalink' " .
-                  " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
-                  " LIMIT 1", $request_noslash, $request_noslash . "/");
-              */
+            if (strpos($request_noslash, 'articles/') !== false){              
               $sql = $wpdb->prepare("SELECT pm.post_id as ID, pm.meta_value " .
                   " FROM paf_custom_permalink AS pm " .
                   " WHERE pm.meta_key = 'custom_permalink' " .
@@ -344,13 +337,6 @@ class Custom_Permalinks_Frontend
         if (empty($posts)) {
 			//optimize the query
           if (strpos($request_noslash, 'articles/') !== false){
-            /*
-            $sql = $wpdb->prepare("SELECT p.ID, pm.meta_value, p.post_type, p.post_status " .
-                " FROM $wpdb->posts AS p INNER JOIN paf_custom_permalink AS pm ON (pm.post_id = p.ID) " .
-                " WHERE pm.meta_key = 'custom_permalink' " .
-                " AND (pm.meta_value = '%s' OR pm.meta_value = '%s') " .
-                " LIMIT 1", $request_noslash, $request_noslash . "/");
-            */
             $sql = $wpdb->prepare("SELECT pm.post_id as ID, pm.meta_value " .
                     " FROM paf_custom_permalink AS pm " .
                     " WHERE pm.meta_key = 'custom_permalink' " .
