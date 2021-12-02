@@ -99,6 +99,7 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '?') !== false ||
             strpos($request_noslash, '.') !== false ||
             strpos($request_noslash, 'api/chart') !== false ||
+            strpos($request_noslash, 'api/stock') !== false ||
             $request_noslash == ''
         ) {
             $posts = 'no_data';
@@ -322,6 +323,7 @@ class Custom_Permalinks_Frontend
             strpos($request_noslash, '?') !== false ||
             strpos($request_noslash, '.') !== false ||
             strpos($request_noslash, 'api/chart') !== false ||
+            strpos($request_noslash, 'api/stock') !== false ||
             $request_noslash == ''
         ) {
             $posts = 'no_data';
